@@ -18,7 +18,7 @@
         <div class ="container">
             <h1 class="text-center mt-3">Connection</h1>
 
-            <form class="mt-5" action="login.php" method="post">
+            <form class="mt-5 p-5" style="background-color: hsl(216, 25%, 95.1%);" action="login.php" method="post">
             <div class="form-group row">
                 <label for="exampleInputEmail1" class="col-sm-2 col-form-label">Email</label>
                 <div class="col-sm-10">
@@ -54,11 +54,15 @@
                 if($nbrRes == 1)
                 {
                     printf('<br>Connection réussie');
-                    header("Location: account.php?login={$login}");
+                    session_start();
+                    $_SESSION["id"]=$login;
+
+                    echo '<br>session = ' . $_SESSION["id"];
+                    header("Location: account.php");
                 }
                 else
                 {
-                    printf('<br>Login ou mot de passe incorrect');
+                    if(isset($_POST["login"]) && isset($_POST["mdp"]))echo '<small id="response" class="form-text text-muted ml-5">Connection refusée</small>';
                 }
             ?>
         </div>

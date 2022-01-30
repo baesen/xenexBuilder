@@ -1,66 +1,56 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <?php
+
+  session_start();
   function ($s)
   {
     $nonAuthorised = array("<",">","(",")","~","|","--","/","\\","$","*","&","[","]","{","}",";");
     $s = str_replace($nonAuthorised, "", $s);
     //echo " traduit en : " . $s . " <br>";
     return $s;
-  } 
+  };
+
+  if(isset($_POST["action"]))
+  {
+    if($_POST["action"] == "déconnexion")disconnect();
+  }
+
+  function disconnect()
+  {
+    echo 'DECONNECTION';
+    unset($_SESSION["id"]);
+    header("location: login.php");
+  };
+
+  $user = '';
+  if(isset($_SESSION["id"]))
+  {
+      $user = $_SESSION["id"];
+  }
+  else
+  {
+      header("location: login.php");
+  }
+
 ?>
 
 <html>
   <head>
-    <title>Test PHP</title>
-    </head>
-    <body>
-        <div class ="container">
-            <h1 class="text-center mt-3">Connection</h1>
+   <title>Compte</title>
+  </head>
+  <body class="d-flex flex-column mb-5">
+    <div class ="container">
+          <?php 
+              echo "<h1 class=\"ml-3 mt-3\">{$user}</h1>";
+          ?>
+      </div>
 
-            <form class="mt-5" action="login.php" method="post">
-            <div class="form-group row">
-                <label for="exampleInputEmail1" class="col-sm-2 col-form-label">Email</label>
-                <div class="col-sm-10">
-                
-                <input type="text" name="login" class="form-control" id="exampleLogin" aria-describedby="loginlHelp" placeholder="Enter login">
-                    
-                <!-- <input type="email" name="login" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
-                <div class="col-sm-10">
-                <input type="password" name="mdp" class="form-control" id="inputPassword" placeholder="Password">
-                </div>
-            </div>
-            <dic class="row justify-content-center">
-                <button type="submit" class="btn btn-primary col-sm-2">Submit</button>
-            </div>
+          <div class="container mt-5 p-5 align-center">
+            <form action="account.php mt-5" method="post">
+              <input type="submit" class="btn-primary" value="déconnexion" name="action"/>
             </form>
-
-            <?php 
-                //connection securisee
-                $mdp = '';
-                if(isset($_POST["mdp"]))$mdp = $_POST["mdp"];
-                secured($mdp);
-
-                $login = isset($_POST["login"]) ? secured($_POST["login"]) : '' ;
-
-                include 'bd_connect.php';
-                $nbrRes = compteSQLresult("SELECT * FROM users WHERE login = '{$login}' AND mdp = '{$mdp}'");
-
-                if($nbrRes == 1)
-                {
-                    printf('<br>Connection réussie');
-                    header("Location: account.php?login={$login}");
-                }
-                else
-                {
-                    printf('<br>Login ou mot de passe incorrect');
-                }
-            ?>
-        </div>
-    </body>
+          </div>
+      </div>
+  </body>
 </html>
