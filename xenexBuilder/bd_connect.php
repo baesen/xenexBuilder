@@ -38,4 +38,26 @@
         }
         return $rowcount;
     }
+
+    function insertCommand($sql, $selectSQL)
+    {
+        $conn = mysqli_connect('localhost','root','','xenex');
+        $rowcount = compteSQLresult($selectSQL);
+        if($rowcount == 0)
+        {
+            if(!$conn->query($sql)) {
+                echo "Échec d'insertion : (" . $conn->errno . ") " . $conn->error;
+            }
+            else
+            {
+                echo "Insertion reussi";
+            }
+        }
+        else
+        {
+            echo "Déjà dans la base";
+        }
+        mysqli_close($conn);   
+    }
+
 ?>

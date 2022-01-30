@@ -39,4 +39,16 @@ insert into users values
 
 drop table decks;
 
-create table decks;
+create table decks (
+    owner varchar(30),
+    nom varchar(10),
+    liste varchar(300),
+    id serial,
+    nb integer
+);
+
+insert into decks values
+('totor', 'PremierD', '0245:0014:0001', 1, 3 ),
+('totor', 'Testu', '0014', 2, 1),
+('thiathias', '42', '', 3, 0)
+;
