@@ -31,7 +31,7 @@
   }
   else
   {
-      header("location: editDeck.php");
+      header("location: login.php");
   }
 
 ?>

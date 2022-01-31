@@ -16,27 +16,27 @@
     </head>
     <body>
         <div class ="container">
-            <h1 class="text-center mt-3">Connection</h1>
+            <h1 class="text-center mt-3">Connexion</h1>
 
             <form class="mt-5 p-5" style="background-color: hsl(216, 25%, 95.1%);" action="login.php" method="post">
             <div class="form-group row">
-                <label for="exampleInputEmail1" class="col-sm-2 col-form-label">Email</label>
+                <label for="exampleInputEmail1" class="col-sm-2 col-form-label">Login</label>
                 <div class="col-sm-10">
                 
-                <input type="text" name="login" class="form-control" id="exampleLogin" aria-describedby="loginlHelp" placeholder="Enter login">
+                <input type="text" name="login" class="form-control" id="exampleLogin" aria-describedby="loginlHelp" placeholder="Login">
                     
                 <!-- <input type="email" name="login" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
                 </div>
             </div>
             <div class="form-group row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                <label for="inputPassword" class="col-sm-2 col-form-label">Mot de passe</label>
                 <div class="col-sm-10">
-                <input type="password" name="mdp" class="form-control" id="inputPassword" placeholder="Password">
+                <input type="password" name="mdp" class="form-control" id="inputPassword" placeholder="Mot de passe">
                 </div>
             </div>
             <dic class="row justify-content-center">
-                <button type="submit" class="btn btn-primary col-sm-2">Submit</button>
+                <button type="submit" class="btn btn-primary col-sm-2">Connexion</button>
             </div>
             </form>
 
