@@ -14,11 +14,11 @@ origine varchar(10)
 
 insert into cards values
 ('void','void','void','void',1,'',-1,-1,'void'),
-('centaure','effect','void','bbn',2,'mob',12,16,'Grec'),
-('hydre','effect','void','bbb',3,'mob',26,22,'Grec'),
-('glaive','effect','void','g',4,'equi',-1,-1,'Grec'),
-('hoplite','effect','void','gg',5,'mob',13,11,'Grec'),
-('phenix','effect','void','ffff',6,'mob',20,28,'Egyptien')
+('centaure','effect','void','bbn',2,'mob',12,16,'grec'),
+('hydre','effect','void','bbb',3,'mob',26,22,'grec'),
+('glaive','effect','void','g',4,'equi',-1,-1,'grec'),
+('hoplite','effect','void','gg',5,'mob',13,11,'grec'),
+('phenix','effect','void','ffff',6,'mob',20,28,'egyptien')
 ;
 
 drop table users;
@@ -48,7 +48,7 @@ create table decks (
 );
 
 insert into decks values
-('totor', 'PremierD', '0001:0003:0007:0005', 1, 3 ),
-('totor', 'Testu', '0004', 2, 1),
-('thiathias', '42', '0002', 3, 0)
+('totor', 'PremierD', '0245:0014:0001', 1, 3 ),
+('totor', 'Testu', '0014', 2, 1),
+('thiathias', '42', '', 3, 0)
 ;
