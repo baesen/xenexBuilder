@@ -2,85 +2,101 @@
 
 <?php
 
-  session_start();
-  include 'bd_connect.php';
-  function ($s)
-  {
-    $nonAuthorised = array("<",">","(",")","~","|","--","/","\\","$","*","&","[","]","{","}",";");
-    $s = str_replace($nonAuthorised, "", $s);
-    //echo " traduit en : " . $s . " <br>";
-    return $s;
-  };
+    session_start();
+    include 'bd_connect.php';
 
-  if(isset($_POST["action"]))
-  {
-    if($_POST["action"] == "déconnexion")disconnect();
-  }
-
-  function disconnect()
-  {
-    echo 'DECONNECTION';
-    unset($_SESSION["id"]);
-    header("location: login.php");
-  };
-
-  function secured($s)
-  {
-    $nonAuthorised = array("<",">","(",")","~","|","--","/","\\","$","*","&","[","]","{","}",";");
-    $s = str_replace($nonAuthorised, "", $s);
-    //echo " traduit en : " . $s . " <br>";
-    return $s;
-  };
-
-  $user = '';
-  $deckId = -1;
-  if(isset($_SESSION["id"]) && isset($_GET["id"]))
-  {
-        $user = $_SESSION["id"];
-        $deckId = $_GET["id"];
-  }
-  else
-  {
-      header("location: login.php");
-  }
-  $chercheNom = ''; $chercheOrigine = '';
-  if(isset($_GET["cherchenom"]))$chercheNom = secured($_GET["cherchenom"]);
-  if(isset($_GET["chercheOrigine"]))$chercheOrigine = secured($_GET["chercheOrigine"]);
-  $sql2 = "SELECT * FROM decks WHERE nom='{$deckId}' AND owner='{$user}'";
-  //echo $sql2;
-  $listeIDnonSepares = (getSQLrequest($sql2)); 
-  //print_r ($listeIDnonSepares);
-  $deckList = array();
-  $deckListID = array();
-  //foreach($listeIDnonSepares as $key => $IdOfCard)
-  //echo $listeIDnonSepares['id'];
-  if(count($listeIDnonSepares) != 0)
-  {
-    $deckListID = explode(':', $listeIDnonSepares[0]['liste']);
-    $deckList = genererDeckList($deckListID);
-  }
-  
-  function genererDeckList($listeID)
-  {
-    $res = array();
-    //print_r($listeID);
-    foreach($listeID as $key => $code)
+    $user = '';
+    $deckId = -1;
+    if(isset($_SESSION["id"]) && isset($_GET["id"]))
     {
-        $sqltmp = "SELECT * FROM cards WHERE id = '{$code}'";
-        //echo $sqltmp;
-        $tmp = getSQLrequest($sqltmp);
-        //echo '<br><br>';
-        //print_r($tmp);
-        $name = '';
-        $carte = getSQLrequest($sqltmp);
-        if(count($carte) != 0)
-        {
-            $name = $carte[0]['nom'];
-            array_push($res, $name);
-        }
+            $user = $_SESSION["id"];
+            $deckId = $_GET["id"];
     }
-    return $res;
-  };
+    else
+    {
+        header("location: login.php");
+    }
+    $chercheNom = ''; $chercheOrigine = ''; $chercheType = '';
+    if(isset($_GET["cherchenom"]))$chercheNom = secured($_GET["cherchenom"]);
+    if(isset($_GET["chercheOrigine"]))$chercheOrigine = secured($_GET["chercheOrigine"]);
+    $addr = "edit.php?id={$deckId}&cherchenom={$chercheNom}&chercheOrigine={$chercheOrigine}&chercheType={$chercheType}";
+    $sql2 = "SELECT * FROM decks WHERE nom='{$deckId}' AND owner='{$user}'";
+
+  
+    function disconnect()
+    {
+      echo 'DECONNECTION';
+      unset($_SESSION["id"]);
+      header("location: login.php");
+    };
+    
+    function secured($s)
+    {
+        $nonAuthorised = array("<",">","(",")","~","|","--","/","\\","$","*","&","[","]","{","}",";");
+        $s = str_replace($nonAuthorised, "", $s);
+        //echo " traduit en : " . $s . " <br>";
+        return $s;
+    };
+    
+    //echo $sql2;
+    $listeIDnonSepares = (getSQLrequest($sql2)); 
+    print_r ($listeIDnonSepares);
+    $deckList = array();
+    $deckListID = array();
+    //foreach($listeIDnonSepares as $key => $IdOfCard)
+    //echo $listeIDnonSepares['id'];
+    if(count($listeIDnonSepares) != 0)
+    {
+        $deckListID = explode(':', $listeIDnonSepares[0]['liste']);
+        $deckList = genererDeckList($deckListID);
+    }
+
+    if(isset($_GET["action"]))
+    {
+      if(substr($_GET["action"], 0, 2) == "rm")
+      {
+          remove(substr(($_GET["action"]), 2));
+      }
+      else if(substr($_GET["action"], 0, 3) == "add")
+      {
+          adding(substr(($_GET["action"]), 3), $listeIDnonSepares, $user, $deckId);
+      }
+    }
+  
+    function remove($cardToDelete)
+    {
+        echo "DELETE de {$cardToDelete}";
+    }
+  
+    function adding($cardToAdd, $listeIDnonSepares, $user, $deckId)
+    {
+        echo "ADD de {$cardToAdd}";
+        $liste = $listeIDnonSepares[0]['liste'] . ":{$cardToAdd}";
+        $request = "UPDATE decks SET liste = '{$liste}' WHERE owner = '{$user}' AND nom = '{$deckId}' ";
+        updateSQL($request);
+    }
+    
+    function genererDeckList($listeID)
+    {
+        $res = array();
+        //print_r($listeID);
+        foreach($listeID as $key => $code)
+        {
+            $sqltmp = "SELECT * FROM cards WHERE id = '{$code}'";
+            //echo $sqltmp;
+            $tmp = getSQLrequest($sqltmp);
+            //echo '<br><br>';
+            //print_r($tmp);
+            $name = '';
+            $carte = getSQLrequest($sqltmp);
+            if(count($carte) != 0)
+            {
+                $name = $carte[0]['nom'];
+                array_push($res, $name);
+            }
+        }
+        return $res;
+    };
 ?>
 
 <html>
@@ -147,14 +163,14 @@
                 {
                     $type = '';
                     $typeLong = $_GET["chercheType"];
-                    if($typeLong == 'Feu'){$type = 'F';}
-                    else if($typeLong == 'Eau'){$type = 'E';}
-                    else if($typeLong == 'Air'){$type = 'A';}
-                    else if($typeLong == 'Nature'){$type = 'N';}
-                    else if($typeLong == 'Ténèbres'){$type = 'T';}
-                    else if($typeLong == 'Bestial'){$type = 'B';}
+                    if($typeLong == 'Feu'){$type = 'f';}
+                    else if($typeLong == 'Eau'){$type = 'e';}
+                    else if($typeLong == 'Air'){$type = 'a';}
+                    else if($typeLong == 'Nature'){$type = 'n';}
+                    else if($typeLong == 'Ténèbres'){$type = 't';}
+                    else if($typeLong == 'Bestial'){$type = 'b';}
                     else if($typeLong == 'Guerrier'){$type = 'g';}
-                    else if($typeLong == 'Terre'){$type = 'P';}
+                    else if($typeLong == 'Terre'){$type = 'p';}
                     $sql = $sql . " AND energies LIKE '%{$type}%'";
                 }
                 //echo $sql;
@@ -168,9 +184,18 @@
                         <div class="card">
                         <img class="card-img-top" src="'. $img .'" alt="Carte ' . $cards['nom'] .'">
                             <div class="card-body">
-                                <h5 class="card-title">' . $cards['nom'] .'</h5>
-                                <a href="#!" class="btn btn-primary">Go somewhere</a>
-                            </div>
+                                <h5 class="card-title">' . $cards['nom'] .'</h5>';
+                                if(in_array($cards["id"], $deckListID))
+                                {
+                                    $addr = $addr . '&action=rm' . $cards["id"];
+                                    echo "<a href=\"{$addr}\" class=\"btn btn-validate\">-</a>";
+                                }
+                                else
+                                {
+                                    $addr = $addr . '&action=add' . $cards["id"];
+                                    echo "<a href=\"{$addr}\" class=\"btn btn-primary\">+</a>";
+                                }
+                            echo '</div>
                         </div>
                     </div>';
                 }

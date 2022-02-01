@@ -60,4 +60,17 @@
         mysqli_close($conn);   
     }
 
+    function updateSQL($sql)
+    {
+        $conn = mysqli_connect('localhost','root','','xenex');
+        if(!$conn->query($sql)) {
+            echo "Échec d'update : (" . $conn->errno . ") " . $conn->error;
+        }
+        else
+        {
+            echo "Update reussi";
+        }
+        mysqli_close($conn);
+    }
+
 ?>
