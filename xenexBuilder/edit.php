@@ -40,40 +40,64 @@
     
     //echo $sql2;
     $listeIDnonSepares = (getSQLrequest($sql2)); 
-    print_r ($listeIDnonSepares);
+    //print_r ($listeIDnonSepares);
     $deckList = array();
     $deckListID = array();
     //foreach($listeIDnonSepares as $key => $IdOfCard)
     //echo $listeIDnonSepares['id'];
+    $countLines = 0;
     if(count($listeIDnonSepares) != 0)
     {
         $deckListID = explode(':', $listeIDnonSepares[0]['liste']);
         $deckList = genererDeckList($deckListID);
+        $countLines = (count($deckListID)-1);
     }
+
+    
 
     if(isset($_GET["action"]))
     {
       if(substr($_GET["action"], 0, 2) == "rm")
       {
-          remove(substr(($_GET["action"]), 2));
+          remove(substr(($_GET["action"]), 2), $listeIDnonSepares, $user, $deckId, $addr);
       }
       else if(substr($_GET["action"], 0, 3) == "add")
       {
-          adding(substr(($_GET["action"]), 3), $listeIDnonSepares, $user, $deckId);
+          adding(substr(($_GET["action"]), 3), $listeIDnonSepares, $user, $deckId, $addr);
       }
     }
   
-    function remove($cardToDelete)
+    function remove($cardToDelete, $listeIDnonSepares, $user, $deckId, $addr)
     {
-        echo "DELETE de {$cardToDelete}";
+        if(strpos($listeIDnonSepares[0]['liste'], $cardToDelete) !== false && (substr_count($listeIDnonSepares[0]['liste'],':') < 20))
+        {
+            echo "DELETE de {$cardToDelete}";
+            $toReplace = ":{$cardToDelete}";
+            $liste = str_replace($toReplace, "", $listeIDnonSepares[0]['liste']);
+            $request = "UPDATE decks SET liste = '{$liste}' WHERE owner = '{$user}' AND nom = '{$deckId}' ";
+            updateSQL($request);
+            header("location: {$addr}");
+        }
+        else
+        {
+            echo "{$cardToDelete} n'est pas dans le deck";
+        }
     }
   
-    function adding($cardToAdd, $listeIDnonSepares, $user, $deckId)
+    function adding($cardToAdd, $listeIDnonSepares, $user, $deckId, $addr)
     {
-        echo "ADD de {$cardToAdd}";
-        $liste = $listeIDnonSepares[0]['liste'] . ":{$cardToAdd}";
-        $request = "UPDATE decks SET liste = '{$liste}' WHERE owner = '{$user}' AND nom = '{$deckId}' ";
-        updateSQL($request);
+        if(strpos($listeIDnonSepares[0]['liste'], $cardToAdd) !== true)
+        {
+            echo "ADD de {$cardToAdd}";
+            $liste = $listeIDnonSepares[0]['liste'] . ":{$cardToAdd}";
+            $request = "UPDATE decks SET liste = '{$liste}' WHERE owner = '{$user}' AND nom = '{$deckId}' ";
+            updateSQL($request);
+            header("location: {$addr}");
+        }
+        else
+        {
+            echo "{$cardToAdd} est déjà dans le deck";
+        }
     }
     
     function genererDeckList($listeID)
@@ -103,58 +127,58 @@
 <head>
    <title>Edition</title>
 </head>
-<body class="d-flex flex-column mb-5">
+<body class="d-flex flex-column mb-5 mt-5">
     <div class ="container-fluid pl-5 pr-5">
-        <div class = "container mt-3 mb-3">
-            <div class = "row">
-                <div class="col-sm-10 mb-3">
-                    <form action="edit.php" method="get">
+        <div class="row">
+            
+            <div class = "col-sm-8 pl-3 pr-3 mr-2"> 
+                <?php //search ?>   
+                <div class = "container-fluid mt-3 mb-5 pt-3 bg-light" style="border-radius:10px">
+                    <div class = "row m-1 justify-content-center">
+                        <div class="col-sm-10">
+                            <form action="edit.php" method="get">
 
-                    <?= "<input type=\"hidden\" name=\"id\" value=\"{$deckId}\">" ?>
-                    <div class="row ml-2">
-                    <div class="col">
-                        <?= '<input type="text" class="form-control" name="cherchenom" placeholder="nom" value="'. $chercheNom .'">'; ?>
+                            <?= "<input type=\"hidden\" name=\"id\" value=\"{$deckId}\">" ?>
+                                <div class="row ml-2">
+                                    <div class="col">
+                                        <?= '<input type="text" class="form-control" name="cherchenom" placeholder="nom" value="'. $chercheNom .'">'; ?>
+                                    </div>
+                                    <div class="col">
+                                    <select id="inputState" name="chercheOrigine" class="form-control">
+                                        <option selected></option>
+                                        <option>Grec</option>
+                                        <option>Nordique</option>
+                                        <option>Egyptien</option>
+                                        <option>Maya</option>
+                                        <option>Sumerien</option>
+                                        <option>Chinois</option>
+                                        <option>Japonais</option>
+                                        <option>Romain</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <select id="inputState" name="chercheType" class="form-control">
+                                        <option selected></option>
+                                        <option>Feu</option>
+                                        <option>Eau</option>
+                                        <option>Air</option>
+                                        <option>Nature</option>
+                                        <option>Terre</option>
+                                        <option>Ténèbres</option>
+                                        <option>Bestial</option>
+                                        <option>Guerrier</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-dark">Chercher</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col">
-                    <select id="inputState" name="chercheOrigine" class="form-control">
-                        <option selected></option>
-                        <option>Grec</option>
-                        <option>Nordique</option>
-                        <option>Egyptien</option>
-                        <option>Maya</option>
-                        <option>Sumerien</option>
-                        <option>Chinois</option>
-                        <option>Japonais</option>
-                        <option>Romain</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <select id="inputState" name="chercheType" class="form-control">
-                        <option selected></option>
-                        <option>Feu</option>
-                        <option>Eau</option>
-                        <option>Air</option>
-                        <option>Nature</option>
-                        <option>Terre</option>
-                        <option>Ténèbres</option>
-                        <option>Bestial</option>
-                        <option>Guerrier</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <button type="submit" class="btn btn-dark">Chercher</button>
-                    </div>
-                    </div>
-                    </form>
                 </div>
 
-                
 
-            </div>
-        </div>
-
-        <div class="row">
-            <div class = "col-sm-8 pl-3 pr-3 mr-2">
                 <?php
                 $sql = "SELECT * FROM cards WHERE 1=1";
                 if(isset($_GET["cherchenom"])){$sql = $sql . " AND nom LIKE '%{$chercheNom}%'";}
@@ -185,15 +209,16 @@
                         <img class="card-img-top" src="'. $img .'" alt="Carte ' . $cards['nom'] .'">
                             <div class="card-body">
                                 <h5 class="card-title">' . $cards['nom'] .'</h5>';
+                                echo "<a href=\"view.php?id={$cards['id']}\" style=\"border-radius: 50px;\" class=\"btn btn-info float-right pl-3 pr-3 ml-3\" target=\"_blank\">i</a>";
                                 if(in_array($cards["id"], $deckListID))
                                 {
                                     $addr = $addr . '&action=rm' . $cards["id"];
-                                    echo "<a href=\"{$addr}\" class=\"btn btn-validate\">-</a>";
+                                    echo "<a href=\"{$addr}\" style=\"border-radius: 50px;\" class=\"btn btn-success float-left justify-content-center pl-5 pr-5\">-</a>";
                                 }
                                 else
                                 {
                                     $addr = $addr . '&action=add' . $cards["id"];
-                                    echo "<a href=\"{$addr}\" class=\"btn btn-primary\">+</a>";
+                                    echo "<a href=\"{$addr}\" style=\"border-radius: 50px;\" class=\"btn btn-primary float-left justify-content-center pr-5 pl-5\">+</a>";
                                 }
                             echo '</div>
                         </div>
@@ -203,11 +228,12 @@
                 </div>
             </div>
 
-            <div class="col-sm-3 mb-3 bg-dark pr-3 ml-5 pl-3 pt-3 pb-3">
+            <div class="col-sm-3 mb-3 bg-dark mt-3 ml-5 pl-3 pt-3 pb-3 float-right">
                 <?php echo '
                     <div class="card bg-dark">
                     <div class="card-header text-light text-center mb-3">
                     <h2>' . $deckId . '</h2>
+                    <h3 class = "float-right">' . $countLines . ' / 20</h3>
                     </div>
                     <ul class="list-group list-group-flush">';
                     $lines = 0;
@@ -216,7 +242,7 @@
                         echo "<li class=\"list-group-item mb-1 mt-1 text-center lead\"><b>{$card}</b></li>";
                         $lines++;
                     }
-                    for(;$lines < 30 ; ++$lines)
+                    for(;$lines < 20 ; ++$lines)
                     {
                         echo "<li class=\"list-group-item mb-1 mt-1 bg-secondary text-center text-white\">?</li>";
                     }                       
