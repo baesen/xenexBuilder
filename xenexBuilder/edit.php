@@ -65,6 +65,14 @@
       {
           adding(substr(($_GET["action"]), 3), $listeIDnonSepares, $user, $deckId, $addr);
       }
+      else if(substr($_GET["action"], 0, 3) == "del")
+      {
+            $cardName = substr(($_GET["action"]), 3);
+            $request = "SELECT * FROM cards WHERE nom='{$cardName}'";
+            $res = getSQLrequest($request)[0]['id'];
+            $addr2 = $addr . '&action=rm' . $res;
+            remove($res, $listeIDnonSepares, $user, $deckId, $addr);
+      } 
     }
   
     function remove($cardToDelete, $listeIDnonSepares, $user, $deckId, $addr)
@@ -74,9 +82,7 @@
             echo "DELETE de {$cardToDelete}";
             $toReplace = ":{$cardToDelete}";
             $liste = str_replace($toReplace, "", $listeIDnonSepares[0]['liste']);
-            $request = "UPDATE decks SET liste = '{$liste}' WHERE owner = '{$user}' AND nom = '{$deckId}' ";
-            updateSQL($request);
-            header("location: {$addr}");
+            updateDeck($liste, $user, $deckId, $addr);
         }
         else
         {
@@ -90,14 +96,22 @@
         {
             echo "ADD de {$cardToAdd}";
             $liste = $listeIDnonSepares[0]['liste'] . ":{$cardToAdd}";
-            $request = "UPDATE decks SET liste = '{$liste}' WHERE owner = '{$user}' AND nom = '{$deckId}' ";
-            updateSQL($request);
-            header("location: {$addr}");
+            updateDeck($liste, $user, $deckId, $addr);
         }
         else
         {
             echo "{$cardToAdd} est déjà dans le deck";
         }
+    }
+
+    function updateDeck($liste, $user, $deckId, $addr)
+    {
+        $countLines = substr_count($liste,':');
+        $request = "UPDATE decks SET liste = '{$liste}', nb = {$countLines} WHERE owner = '{$user}' AND nom = '{$deckId}' ";
+        //echo "UPDATE par {$liste} -> {$request}";
+        updateSQL($request);
+        echo "UPDATE : location: {$addr}";
+        header("location: {$addr}");
     }
     
     function genererDeckList($listeID)
@@ -164,7 +178,7 @@
                                         <option>Air</option>
                                         <option>Nature</option>
                                         <option>Terre</option>
-                                        <option>Ténèbres</option>
+                                        <option>Mort</option>
                                         <option>Bestial</option>
                                         <option>Guerrier</option>
                                         </select>
@@ -191,7 +205,7 @@
                     else if($typeLong == 'Eau'){$type = 'e';}
                     else if($typeLong == 'Air'){$type = 'a';}
                     else if($typeLong == 'Nature'){$type = 'n';}
-                    else if($typeLong == 'Ténèbres'){$type = 't';}
+                    else if($typeLong == 'Mort'){$type = 'm';}
                     else if($typeLong == 'Bestial'){$type = 'b';}
                     else if($typeLong == 'Guerrier'){$type = 'g';}
                     else if($typeLong == 'Terre'){$type = 'p';}
@@ -212,13 +226,13 @@
                                 echo "<a href=\"view.php?id={$cards['id']}\" style=\"border-radius: 50px;\" class=\"btn btn-info float-right pl-3 pr-3 ml-3\" target=\"_blank\">i</a>";
                                 if(in_array($cards["id"], $deckListID))
                                 {
-                                    $addr = $addr . '&action=rm' . $cards["id"];
-                                    echo "<a href=\"{$addr}\" style=\"border-radius: 50px;\" class=\"btn btn-success float-left justify-content-center pl-5 pr-5\">-</a>";
+                                    $addr2 = $addr . '&action=rm' . $cards["id"];
+                                    echo "<a href=\"{$addr2}\" style=\"border-radius: 50px;\" class=\"btn btn-success float-left justify-content-center pl-5 pr-5\">-</a>";
                                 }
                                 else
                                 {
-                                    $addr = $addr . '&action=add' . $cards["id"];
-                                    echo "<a href=\"{$addr}\" style=\"border-radius: 50px;\" class=\"btn btn-primary float-left justify-content-center pr-5 pl-5\">+</a>";
+                                    $addr2 = $addr . '&action=add' . $cards["id"];
+                                    echo "<a href=\"{$addr2}\" style=\"border-radius: 50px;\" class=\"btn btn-primary float-left justify-content-center pr-5 pl-5\">+</a>";
                                 }
                             echo '</div>
                         </div>
@@ -237,9 +251,13 @@
                     </div>
                     <ul class="list-group list-group-flush">';
                     $lines = 0;
+                    //print_r($deckList);
                     foreach($deckList as $key => $card)
                     {
-                        echo "<li class=\"list-group-item mb-1 mt-1 text-center lead\"><b>{$card}</b></li>";
+                        echo "<li class=\"list-group-item mb-1 mt-1 pr-3 text-center lead\"><b>{$card}</b>";
+                        $addr2 = $addr . '&action=del' . $card;
+                        echo "<a href=\"{$addr2}\" class=\"btn btn-danger float-right justify-content-center\">✘</a>
+                        </li>";
                         $lines++;
                     }
                     for(;$lines < 20 ; ++$lines)

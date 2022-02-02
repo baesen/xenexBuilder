@@ -3,7 +3,6 @@ drop table cards;
 create table cards (
 nom varchar(50),
 effect varchar(300),
-img varchar(100),
 energies varchar(20),
 id serial,
 type varchar(5),
@@ -13,12 +12,15 @@ origine varchar(10)
 );
 
 insert into cards values
-('void','void','void','void',1,'',-1,-1,'void'),
-('centaure','effect','void','bbn',2,'mob',12,16,'Grec'),
-('hydre','effect','void','bbb',3,'mob',26,22,'Grec'),
-('glaive','effect','void','g',4,'equi',-1,-1,'Grec'),
-('hoplite','effect','void','gg',5,'mob',13,11,'Grec'),
-('phenix','effect','void','ffff',6,'mob',20,28,'Egyptien')
+('Achille','Chimere',     'g',         1,      'mob',         25,     17,     'Grec'),
+('Aegis','Si le personnage equipe doit etre detruit, detruisez cette carte a la place',     '',          2,      'equi',      -1,     -1,     'Grec'),
+('Affrontement de gladiateur','Un personnage adverse doit combattre un de vos personnages',     'g',          3,      'def',      -1,     -1,     'Romain'),
+('Ah Muzen Cab',      'Attaque sans etre attaque, peut attaquer 2x par tours',     'a',            4,      'dieu',     17,     21,     'Maya'),
+('Ao Kuang',     'Vos Dragons sont gratuits',     'd',           5,      'dieu',      29,     27,     'Chinois'),
+('Amakusa Shiro','effect',     's',         6,      'mob',      17,     21,     'Japonais'),
+('Amateratsu','Vos autres Soldats gagnent 3 points d attaque et de defense', 'l', 7, 'dieu', 25, 28, 'Japonais'),
+('Ammit','Vous rend les degats qu il inflige. ne peut pas etre affecte par les effets adverses', 't', 8, 'mob', 22, 17, 'Egyptien'),
+('Charon','Chaque tour, vous devez defausser une carte de votre main', 'm', 9, 'mob', 18, 21, 'Grec')
 ;
 
 drop table users;

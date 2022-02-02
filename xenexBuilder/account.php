@@ -83,7 +83,7 @@
                     echo "<th scope = \"row\">{$key}</th>";
     
                     echo '<td>' . $deck['nom'] . '</td>';
-                   echo '<td style="text-align : center">' . $deck['nb'] . ' / 40</td>';
+                   echo '<td style="text-align : center">' . $deck['nb'] . ' / 20</td>';
                    $ref = "edit.php?id={$deck['nom']}";
                    echo "<td style=\"text-align : center\"><a href=\"$ref\" class=\"btn btn-light\" role=\"button\">🖉</a></td>";
                    echo '</tr>';
