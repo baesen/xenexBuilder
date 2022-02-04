@@ -34,10 +34,10 @@
             <form class="mt-5 p-5" style="background-color: hsl(216, 25%, 95.1%);" action="createDeck.php" method="post">
             <div class="form-group row">
                 <div class="col-sm-9">
-                    <input type="text" name="nom" class="form-control" id="inputName" placeholder="Nom">
+                    <input type="text" name="nom" class="form-control" id="inputName" maxlength="10" placeholder="Nom">
                 </div>
                 <div class="col-sm-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
                 </div>
             </div>
         </div>

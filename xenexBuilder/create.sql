@@ -17,7 +17,7 @@ insert into cards values
 ('Affrontement de gladiateur','Un personnage adverse doit combattre un de vos personnages',     'g',          3,      'def',      -1,     -1,     'Romain'),
 ('Ah Muzen Cab',      'Attaque sans etre attaque, peut attaquer 2x par tours',     'a',            4,      'dieu',     17,     21,     'Maya'),
 ('Ao Kuang',     'Vos Dragons sont gratuits',     'd',           5,      'dieu',      29,     27,     'Chinois'),
-('Amakusa Shiro','effect',     's',         6,      'mob',      17,     21,     'Japonais'),
+('Amakusa Shiro','effect',     'g',         6,      'mob',      17,     21,     'Japonais'),
 ('Amateratsu','Vos autres Soldats gagnent 3 points d attaque et de defense', 'l', 7, 'dieu', 25, 28, 'Japonais'),
 ('Ammit','Vous rend les degats qu il inflige. ne peut pas etre affecte par les effets adverses', 't', 8, 'mob', 22, 17, 'Egyptien'),
 ('Charon','Chaque tour, vous devez defausser une carte de votre main', 'm', 9, 'mob', 18, 21, 'Grec')
@@ -50,7 +50,7 @@ create table decks (
 );
 
 insert into decks values
-('totor', 'PremierD', '0001:0003:0007:0005', 1, 3 ),
-('totor', 'Testu', '0004', 2, 1),
-('thiathias', '42', '0002', 3, 0)
+('totor', 'PremierD', ':1:2:3:4', 1, 3 ),
+('totor', 'Testu', '', 2, 1),
+('thiathias', '42', '', 3, 0)
 ;

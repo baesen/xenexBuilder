@@ -23,7 +23,7 @@
                 <label for="exampleInputEmail1" class="col-sm-2 col-form-label">Login</label>
                 <div class="col-sm-10">
                 
-                <input type="text" name="login" class="form-control" id="exampleLogin" aria-describedby="loginlHelp" placeholder="Login">
+                <input type="text" name="login" class="form-control" maxlength="50" id="exampleLogin" aria-describedby="loginlHelp" placeholder="Login">
                     
                 <!-- <input type="email" name="login" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
@@ -32,7 +32,7 @@
             <div class="form-group row">
                 <label for="inputPassword" class="col-sm-2 col-form-label">Mot de passe</label>
                 <div class="col-sm-10">
-                <input type="password" name="mdp" class="form-control" id="inputPassword" placeholder="Mot de passe">
+                <input type="password" name="mdp" class="form-control" maxlength="30" id="inputPassword" placeholder="Mot de passe">
                 </div>
             </div>
             <dic class="row justify-content-center">
@@ -42,10 +42,7 @@
 
             <?php 
                 //connection securisee
-                $mdp = '';
-                if(isset($_POST["mdp"]))$mdp = $_POST["mdp"];
-                secured($mdp);
-
+                $mdp = isset($_POST["mdp"]) ? secured($_POST["mdp"]) : '' ;
                 $login = isset($_POST["login"]) ? secured($_POST["login"]) : '' ;
 
                 include 'bd_connect.php';
@@ -57,8 +54,18 @@
                     session_start();
                     $_SESSION["id"]=$login;
 
+                    $right = getSQLrequest("SELECT * FROM users WHERE login = '{$login}' AND mdp = '{$mdp}'")[0]["rank"];
+                    if($right == 1)
+                    {
+                        $_SESSION["power"] = "admin";
+                        header("Location: accountAdmin.php");
+                    }
+                    else
+                    {
+                        $_SESSION["power"] = "utilisateur";
+                        header("Location: account.php");
+                    }
                     echo '<br>session = ' . $_SESSION["id"];
-                    header("Location: account.php");
                 }
                 else
                 {

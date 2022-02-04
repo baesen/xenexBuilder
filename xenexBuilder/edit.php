@@ -10,7 +10,7 @@
     if(isset($_SESSION["id"]) && isset($_GET["id"]))
     {
             $user = $_SESSION["id"];
-            $deckId = $_GET["id"];
+            $deckId = secured($_GET["id"]);
     }
     else
     {
@@ -57,17 +57,17 @@
 
     if(isset($_GET["action"]))
     {
-      if(substr($_GET["action"], 0, 2) == "rm")
+      if(substr(secured($_GET["action"]), 0, 2) == "rm")
       {
-          remove(substr(($_GET["action"]), 2), $listeIDnonSepares, $user, $deckId, $addr);
+          remove(substr(secured($_GET["action"]), 2), $listeIDnonSepares, $user, $deckId, $addr);
       }
-      else if(substr($_GET["action"], 0, 3) == "add")
+      else if(substr(secured($_GET["action"]), 0, 3) == "add")
       {
-          adding(substr(($_GET["action"]), 3), $listeIDnonSepares, $user, $deckId, $addr);
+          adding(substr(secured($_GET["action"]), 3), $listeIDnonSepares, $user, $deckId, $addr);
       }
       else if(substr($_GET["action"], 0, 3) == "del")
       {
-            $cardName = substr(($_GET["action"]), 3);
+            $cardName = substr(secured($_GET["action"]), 3);
             $request = "SELECT * FROM cards WHERE nom='{$cardName}'";
             $res = getSQLrequest($request)[0]['id'];
             $addr2 = $addr . '&action=rm' . $res;
@@ -244,7 +244,7 @@
 
             <div class="col-sm-3 mb-3 bg-dark mt-3 ml-5 pl-3 pt-3 pb-3 float-right">
                 <?php echo '
-                    <div class="card bg-dark">
+                    <div class="card bg-dark mb-5">
                     <div class="card-header text-light text-center mb-3">
                     <h2>' . $deckId . '</h2>
                     <h3 class = "float-right">' . $countLines . ' / 20</h3>
@@ -266,6 +266,15 @@
                     }                       
                     echo '</ul></div>'; 
                 ?>
+                <div class = "text-center mt-5">
+                    <?= "<a class=\"btn btn-success btn-lg btn-block\" href=\"account.php\"><h3>Quitter</h3></a>"; ?>
+                </div>
+                
+                <div class = "text-center mt-5">
+                    <form action="export.php" method="post">
+                        <button class="btn btn-success btn-lg btn-block" value= "<?=$deckId?>" name="id">Exporter</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
